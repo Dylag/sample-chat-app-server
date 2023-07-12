@@ -26,7 +26,7 @@ public class ConnectionScanner implements Runnable{
                     Server.users.get(Server.users.size()-1).start();
                 }
                 catch (Exception ex){
-                    System.out.println("Sysyem scanner: "+ex);
+                    System.out.println("Connection scanner: "+ex);
                 }
             }
             catch(Exception ex)
