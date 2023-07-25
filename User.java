@@ -63,7 +63,7 @@ public class User extends Thread {
                                 String password = in.readLine();
 
                                 try (PrintWriter pw = new PrintWriter(new FileWriter("users.txt",true))) {
-                                    pw.println(line + "|" + password);
+                                    pw.println("\n"+line + "|" + password);
                                 } catch (Exception ex) {
                                     System.out.println(ex);
                                 }
@@ -107,6 +107,17 @@ public class User extends Thread {
                         break authLoop;
                 }
             }
+
+
+            while(true)
+            {
+                String message = in.readLine();
+                System.out.println(message);
+                for(var i : Server.users)
+                    i.out.println(message);
+            }
+
+
         } catch (Exception ex) {
             System.out.println(ex);
         }
