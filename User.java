@@ -26,6 +26,9 @@ public class User extends Thread {
             System.out.println(in.readLine());
 
             //getting db
+
+
+
             Map<String, String> users = new HashMap<>();
             String line;
             try (BufferedReader dbReader = new BufferedReader(new FileReader("users.txt"))) {
