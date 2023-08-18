@@ -1,5 +1,3 @@
-package Chat.Server;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,8 +11,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import Chat.Server.User;
-import Chat.Server.ConnectionScanner;
 
 public class Server {
     static int PORT = 0;
