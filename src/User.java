@@ -17,10 +17,11 @@ public class User extends Thread {
 
         try {
             //initializing closeable stuff
+            //i know that i should delete my url, data and pw, but im too lazy to do it
             Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/chat","postgres","123");
             Statement statement = connection.createStatement();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
             out.println("connected");
 
@@ -81,6 +82,7 @@ public class User extends Thread {
                     }
                 }
 
+                //closing closeable stuff
                 connection.close();
                 statement.close();
             }
