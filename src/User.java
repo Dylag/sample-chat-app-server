@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 
@@ -21,12 +22,12 @@ public class User extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-            System.out.println("User running!");
+            out.println("connected");
 
-            out.println("Hello from server!");
+            System.out.println("User is running!");
+
             System.out.println(in.readLine());
 
-           //end of getting db
 
             authLoop: while (true) {
                 String option = in.readLine();
@@ -42,12 +43,12 @@ public class User extends Thread {
 
                             sql = String.format("""
                                     SELECT * FROM users
-                                    WHERE name = %s""", authData[0]);
+                                    WHERE name = '%s'""", authData[0]);
 
-                            if (!statement.execute(sql)) {
+                            if (!statement.executeQuery(sql).next()) {
                                 sql = String.format("""
                                     INSERT INTO users(name,password)
-                                    VALUES (%s, %s);
+                                    VALUES ('%s', '%s');
                                         """,authData[0], authData[1]);
                                 statement.executeUpdate(sql);
                                 out.println("yes");
@@ -61,13 +62,11 @@ public class User extends Thread {
                     case "log" -> {
                         while (!line.equals("|back")) {
                             String[] authData = line.split("\\|");
-
                             sql = String.format("""
                                     SELECT * from users
-                                    WHERE name = %s and password = %s
+                                    WHERE name = '%s' and password = '%s'
                                     """,authData[0],authData[1]);
-
-                            if(statement.execute(sql)){
+                            if(statement.executeQuery(sql).next()){
                                 out.println("yes");
                                 break authLoop;
                             } else

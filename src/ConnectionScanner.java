@@ -16,19 +16,13 @@ public class ConnectionScanner implements Runnable{
         {
             try(ServerSocket serverSocket = new ServerSocket(port))
             {
-                try
-                {
-                    Socket socket = serverSocket.accept();
-                    System.out.println("new user connected");
-                    Server.users.add(new User(socket));
-                    Server.users.get(Server.users.size()-1).start();
-                }
-                catch (Exception ex){
-                    System.out.println("Connection scanner: "+ex);
-                }
+                Socket socket = serverSocket.accept();
+                System.out.println("new user connected");
+                Server.users.add(new User(socket));
+                Server.users.get(Server.users.size()-1).start();
+
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex) {
                 System.out.println(ex);
             }
         }
