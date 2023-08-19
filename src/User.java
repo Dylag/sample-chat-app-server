@@ -34,16 +34,17 @@ public class User extends Thread {
                 String line;
                 String sql;
                 line = in.readLine();
-                String[] authData = line.split("\\|");
+
                 switch (option) {
                     case "reg" -> {
                         while (!line.equals("|back")) {
+                            String[] authData = line.split("\\|");
+
                             sql = String.format("""
                                     SELECT * FROM users
                                     WHERE name = %s""", authData[0]);
 
-                            boolean res = statement.execute(sql);
-                            if (!res) {
+                            if (!statement.execute(sql)) {
                                 sql = String.format("""
                                     INSERT INTO users(name,password)
                                     VALUES (%s, %s);
@@ -53,23 +54,26 @@ public class User extends Thread {
                                 break authLoop;
                             } else
                                 out.println("no");
+
+                            line = in.readLine();
                         }
                     }
                     case "log" -> {
                         while (!line.equals("|back")) {
+                            String[] authData = line.split("\\|");
 
                             sql = String.format("""
                                     SELECT * from users
                                     WHERE name = %s and password = %s
                                     """,authData[0],authData[1]);
 
-                            boolean res = statement.execute(sql);
-
-                            if(res){
+                            if(statement.execute(sql)){
                                 out.println("yes");
                                 break authLoop;
                             } else
-                                out.println("login error");
+                                out.println("no");
+
+                            line = in.readLine();
                         }
                     }
 
