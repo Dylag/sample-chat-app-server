@@ -17,9 +17,8 @@ public class User extends Thread {
 
         try {
             //initializing closeable stuff
-            //i know that i should delete my url, data and pw, but im too lazy to do it
-            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/chat","postgres","123");
-            Statement statement = connection.createStatement();
+            //i know that i should delete my url, user and password, but im too lazy to do it
+
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
@@ -29,70 +28,82 @@ public class User extends Thread {
 
             System.out.println(in.readLine());
 
+            systemLoop:while(true){
+                authLoop: while (true) {
 
-            authLoop: while (true) {
-                String option = in.readLine();
-                System.out.println("option: " + option);
-                String line;
-                String sql;
-                line = in.readLine();
+                    Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/chat","postgres","123");
+                    Statement statement = connection.createStatement();
 
-                switch (option) {
-                    case "reg" -> {
-                        while (!line.equals("|back")) {
-                            String[] authData = line.split("\\|");
+                    String option = in.readLine();
+                    System.out.println("option: " + option);
+                    String line;
+                    String sql;
+                    line = in.readLine();
 
-                            sql = String.format("""
-                                    SELECT * FROM users
-                                    WHERE name = '%s'""", authData[0]);
+                    switch (option) {
 
-                            if (!statement.executeQuery(sql).next()) {
+                        case "reg" -> {
+                            while (!line.equals("|back")) {
+                                String[] authData = line.split("\\|");
+
                                 sql = String.format("""
-                                    INSERT INTO users(name,password)
-                                    VALUES ('%s', '%s');
-                                        """,authData[0], authData[1]);
-                                statement.executeUpdate(sql);
-                                out.println("yes");
-                                break authLoop;
-                            } else
-                                out.println("no");
+                                        SELECT * FROM users
+                                        WHERE name = '%s'""", authData[0]);
 
-                            line = in.readLine();
+                                if (!statement.executeQuery(sql).next()) {
+                                    sql = String.format("""
+                                        INSERT INTO users(name,password)
+                                        VALUES ('%s', '%s');
+                                            """,authData[0], authData[1]);
+                                    statement.executeUpdate(sql);
+                                    out.println("yes");
+                                    break authLoop;
+                                } else
+                                    out.println("no");
+
+                                line = in.readLine();
+                            }
+
+                            System.out.println("quiting reg");
+                        }
+
+                        case "log" -> {
+                            while (!line.equals("|back")) {
+                                String[] authData = line.split("\\|");
+                                sql = String.format("""
+                                        SELECT * from users
+                                        WHERE name = '%s' and password = '%s'
+                                        """,authData[0],authData[1]);
+
+                                System.out.println(sql);
+                                if(statement.executeQuery(sql).next()){
+                                    out.println("yes");
+                                    break authLoop;
+                                } else
+                                    out.println("no");
+
+                                line = in.readLine();
+                            }
+                        }
+
+                        default -> {
+                            break authLoop;
                         }
                     }
-                    case "log" -> {
-                        while (!line.equals("|back")) {
-                            String[] authData = line.split("\\|");
-                            sql = String.format("""
-                                    SELECT * from users
-                                    WHERE name = '%s' and password = '%s'
-                                    """,authData[0],authData[1]);
-                            if(statement.executeQuery(sql).next()){
-                                out.println("yes");
-                                break authLoop;
-                            } else
-                                out.println("no");
 
-                            line = in.readLine();
-                        }
-                    }
-
-                    default -> {
-                        break authLoop;
-                    }
+                    System.out.println("closing stuff");
+                    //closing closeable stuff
+                    connection.close();
+                    statement.close();
                 }
-
-                //closing closeable stuff
-                connection.close();
-                statement.close();
-            }
-
-            while(true)
-            {
                 String message = in.readLine();
-                System.out.println(message);
-                for(var i : Server.users)
-                    i.out.println(message);
+                while(!message.equals("|back"))
+                {
+                    System.out.println(message);
+                    for(var i : Server.users)
+                        i.out.println(message);
+                    message = in.readLine();
+                }
             }
         } catch (Exception ex) {
             System.out.println(ex);

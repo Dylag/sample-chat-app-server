@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Vector;
 
 public class Server {
-    static int PORT = 0;
+    static final int PORT = 6040;
 
     public static ArrayList<User> users = new ArrayList<User>();
 
     public static void main(String[] args) throws IOException {
         System.out.println(InetAddress.getLocalHost());
-        PORT = 6040;
         System.out.println("Connecting...\n" + InetAddress.getLocalHost() + "   " + PORT);
         Thread connectionScanner = new Thread(new ConnectionScanner(PORT));
         connectionScanner.start();
